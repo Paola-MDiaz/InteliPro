@@ -45,7 +45,7 @@ export default function Login({ onLoginExitoso }) {
                             id="usuario"
                             type="text"
                             className="form-control"
-                            placeholder="Ej. admin_13 o cliente@correo.com"
+                            placeholder="@gmail.com"
                             value={usuario}
                             onChange={(e) => setUsuario(e.target.value)}
                             required
@@ -87,7 +87,7 @@ export default function Login({ onLoginExitoso }) {
                 </form>
 
                 <div className="login-footer">
-                    Acceso autorizado · MongoDB Atlas Cloud
+                    
                 </div>
             </div>
         </div>
