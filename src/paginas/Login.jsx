@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../api';
+import { api, MODO_PRUEBA } from '../api';
 
 export default function Login({ onLoginExitoso }) {
     const [usuario, setUsuario] = useState('');
@@ -10,15 +10,13 @@ export default function Login({ onLoginExitoso }) {
     const [cargando, setCargando] = useState(false);
     const navigate = useNavigate();
 
-    const manejarSubmit = async (e) => {
-        e.preventDefault();
+    const entrarConUsuario = async (user, pass) => {
         setError('');
         setCargando(true);
-
         try {
             const datos = await api('/auth/login', {
                 method: 'POST',
-                body: JSON.stringify({ usuario, contrasena }),
+                body: JSON.stringify({ usuario: user, contrasena: pass }),
             });
             onLoginExitoso(datos.usuario || datos);
             navigate(datos.inicio || datos.usuario?.inicio || '/catalogo', { replace: true });
@@ -27,6 +25,11 @@ export default function Login({ onLoginExitoso }) {
         } finally {
             setCargando(false);
         }
+    };
+
+    const manejarSubmit = (e) => {
+        e.preventDefault();
+        entrarConUsuario(usuario, contrasena);
     };
 
     return (
@@ -45,7 +48,7 @@ export default function Login({ onLoginExitoso }) {
                             id="usuario"
                             type="text"
                             className="form-control"
-                            placeholder="@gmail.com"
+                            placeholder="*****@correo.com"
                             value={usuario}
                             onChange={(e) => setUsuario(e.target.value)}
                             required
@@ -86,8 +89,30 @@ export default function Login({ onLoginExitoso }) {
                     </button>
                 </form>
 
+                {MODO_PRUEBA && (
+                    <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px dashed #cbd5e1' }}>
+                        <p style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '0.5rem', textAlign: 'center' }}>
+                            Acceso rápido (Modo prueba sin servidor):
+                        </p>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                            <button type="button" className="nav-link" style={{ border: '1px solid #e2e8f0' }} onClick={() => entrarConUsuario('cliente', '1234')}>
+                                Entrar como Cliente
+                            </button>
+                            <button type="button" className="nav-link" style={{ border: '1px solid #e2e8f0' }} onClick={() => entrarConUsuario('vendedor', '1234')}>
+                                Entrar como Vendedor
+                            </button>
+                            <button type="button" className="nav-link" style={{ border: '1px solid #e2e8f0' }} onClick={() => entrarConUsuario('gerente', '1234')}>
+                                Entrar como Gerente
+                            </button>
+                            <button type="button" className="nav-link" style={{ border: '1px solid #e2e8f0' }} onClick={() => entrarConUsuario('admin', '1234')}>
+                                Entrar como Admin
+                            </button>
+                        </div>
+                    </div>
+                )}
+
                 <div className="login-footer">
-                    
+
                 </div>
             </div>
         </div>
